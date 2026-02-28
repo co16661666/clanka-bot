@@ -3,13 +3,14 @@
 #include <MQTTClient.h>
 #include <ArduinoJson.h>
 #include "WiFi.h"
-
-// The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+#include <time.h>
 
 WiFiClientSecure net = WiFiClientSecure();
 MQTTClient client = MQTTClient(256);
+
+String nickname = "bot1";
+String aws_iot_publish_topic = "esp32/" + nickname;
+String aws_iot_receive_topic = "esp32/john";
 
 void connectAWS()
 {
@@ -22,6 +23,17 @@ void connectAWS()
     delay(500);
     Serial.print(".");
   }
+
+  // Set time via NTP for EST (UTC-5)
+  configTime(-18000, 0, "pool.ntp.org", "time.nist.gov");
+  Serial.print("\nWaiting for NTP time sync: ");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println("");
 
   // Configure WiFiClientSecure to use the AWS IoT device credentials
   net.setCACert(AWS_CERT_CA);
@@ -55,20 +67,26 @@ void connectAWS()
   }
 
   // Subscribe to a topic
-  client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
+  client.subscribe(aws_iot_receive_topic);
 
   Serial.println("AWS IoT Connected!");
 }
 
 void publishMessage()
 {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  char timeBuffer[30];
+  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S EST", &timeinfo);
+
   StaticJsonDocument<200> doc;
-  doc["time"] = millis();
+  doc["time"] = timeBuffer;
   doc["sensor_a0"] = analogRead(0);
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
 
-  if (client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer)) {
+  if (client.publish(aws_iot_publish_topic, jsonBuffer)) {
     Serial.println("Publish Success");
   } else {
     Serial.println("Publish Failed");
