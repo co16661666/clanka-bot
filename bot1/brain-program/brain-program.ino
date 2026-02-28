@@ -24,8 +24,8 @@ void connectAWS()
     Serial.print(".");
   }
 
-  // Set time via NTP for EST (UTC-5)
-  configTime(-18000, 0, "pool.ntp.org", "time.nist.gov");
+  // Set time via NTP for UTC (UTC+0)
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   Serial.print("\nWaiting for NTP time sync: ");
   time_t now = time(nullptr);
   while (now < 8 * 3600 * 2) {
@@ -78,7 +78,7 @@ void publishMessage()
   struct tm timeinfo;
   localtime_r(&now, &timeinfo);
   char timeBuffer[30];
-  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S EST", &timeinfo);
+  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S UTC", &timeinfo);
 
   StaticJsonDocument<200> doc;
   doc["time"] = timeBuffer;
