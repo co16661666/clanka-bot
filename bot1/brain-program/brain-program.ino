@@ -1,4 +1,4 @@
-#include "secrets.h"
+#include "arduino_secrets.h"
 #include <WiFiClientSecure.h>
 #include <MQTTClient.h>
 #include <ArduinoJson.h>
@@ -35,10 +35,18 @@ void connectAWS()
   client.onMessage(messageHandler);
 
   Serial.print("Connecting to AWS IOT");
-
+  
   while (!client.connect(THINGNAME)) {
     Serial.print(".");
-    delay(100);
+    
+    // Print diagnostic information
+    Serial.println();
+    Serial.print("MQTT Error Code: ");
+    Serial.println(client.lastError());
+    Serial.print("MQTT Return Code: ");
+    Serial.println(client.returnCode());
+    
+    delay(1000);
   }
 
   if(!client.connected()){
@@ -60,15 +68,19 @@ void publishMessage()
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
 
-  client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
+  if (client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer)) {
+    Serial.println("Publish Success");
+  } else {
+    Serial.println("Publish Failed");
+  }
 }
 
 void messageHandler(String &topic, String &payload) {
   Serial.println("incoming: " + topic + " - " + payload);
 
-//  StaticJsonDocument<200> doc;
-//  deserializeJson(doc, payload);
-//  const char* message = doc["message"];
+  StaticJsonDocument<200> doc;
+  deserializeJson(doc, payload);
+  const char* message = doc["message"];
 }
 
 void setup() {
