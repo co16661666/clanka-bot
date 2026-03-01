@@ -18,7 +18,7 @@ An interactive, character-driven smart alarm clock built with the **Seeed Studio
 
 ### Mechanical Design
 The physical enclosure and servo mounts were modeled using **Solidworks**. 
-* The CAD files (including native `.SLDPRT`/`.SLDASM` and `.STL` files for 3D printing, which are not included here) can be found in the `/housing` directory of this repository.
+* The CAD files (including native `.SLDPRT`/`.SLDASM` and `.STL` files for 3D printing, which are not included here) can be found in the `/housing` directory of this repository. Previous versions of the arm are still in the repository, with V2 files being the most up to date.
 * The Arduino files were .ino and relate to the `/expressions-programV2` and `/brain-program` files in the repository.
 
 ---
