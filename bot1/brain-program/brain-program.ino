@@ -6,8 +6,8 @@
 #include "vinny_moods.h"
 
 // The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+#define AWS_IOT_PUBLISH_TOPIC   "esp32/bot1"
+#define AWS_IOT_SUBSCRIBE_TOPIC "esp32/bot2"
 
 #include <time.h>
 
@@ -71,11 +71,7 @@ WiFiClientSecure net = WiFiClientSecure();
 MQTTClient client = MQTTClient(256);
 
 // This bot's identity
-String nickname              = "bot1";
-String aws_iot_publish_topic = "esp32/" + nickname;
-
-// Subscribe to the OTHER bot (two-bot system)
-String aws_iot_receive_topic = "esp32/bot2";
+String nickname = "bot1";
 
 // ============================================================
 // Emote Placeholder Functions (implement later)
@@ -169,8 +165,8 @@ void connectAWS()
     return;
   }
 
-  // Subscribe to the other bot's topic
-  client.subscribe(aws_iot_receive_topic);
+  // Subscribe using the defined topic
+  client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
 
   Serial.println("AWS IoT Connected!");
 }
@@ -200,7 +196,7 @@ void publishMessage(int messageIndex)
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
 
-  if (client.publish(aws_iot_publish_topic, jsonBuffer)) {
+  if (client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer)) {
     Serial.println("Published: " + String(msgToSend));
   } else {
     Serial.println("Publish Failed");
@@ -227,7 +223,7 @@ bool readInputSignal(int &potValue, bool &touchA, bool &touchB) {
   potValue = analogRead(POT_PIN);
   touchA   = (touchRead(TOUCH_PIN_A) < TOUCH_THRESHOLD);
   touchB   = (touchRead(TOUCH_PIN_B) < TOUCH_THRESHOLD);
-  return (potValue > POT_THRESHOLD) || touchA || touchB;
+  return touchA || touchB;                 // only touches open the menu
 }
 
 // ============================================================
@@ -255,9 +251,9 @@ void loop() {
       if (hasSignal) {
         currentState  = S1_MENU;
         menuSelection = 0;
-        Serial.println("=== MENU ===");
-        Serial.println("0: Send Message");
-        Serial.println("1: Set Alarm");
+        // Serial.println("=== MENU ===");
+        // Serial.println("0: Send Message");
+        // Serial.println("1: Set Alarm");
       } else if (newMessageFlag) {
         currentState = S2_DISPLAY_MSG;
       }
