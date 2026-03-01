@@ -1,4 +1,4 @@
-# ⏰ Expressive Budster
+# ⏰ deska clanka
 
 An interactive, character-driven smart alarm clock built with the **Seeed Studio XIAO ESP32C3**. This project brings a standard clock to life using procedural OLED eye animations and coordinated servo-driven arms to express different moods based on the time of day or user interaction.
 
