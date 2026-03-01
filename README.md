@@ -55,7 +55,7 @@ Open the Arduino Library Manager (**Sketch > Include Library > Manage Libraries.
 ### 4. Uploading the Code
 1. Connect the XIAO ESP32C3 to your computer via USB-C.
 2. Select the correct COM port under **Tools > Port**.
-3. Open the `smart_alarm_clock.ino` sketch.
+3. Open the `expressions-programV2.ino` sketch.
 4. Click the **Upload** arrow.
 
 ---
@@ -67,3 +67,4 @@ This project was made possible by several excellent open-source tools, libraries
 * **Espressif Systems & Seeed Studio:** For the ESP32 core board definitions and the XIAO hardware.
 * **Design Inspiration:** The procedural masking logic for the eye expressions was heavily inspired by the "Vinny" robot eye designs and various open-source animated OLED eye projects found across the maker community. 
 * **Solidworks:** Used for all 3D mechanical design, part modeling, and assembly testing.
+* **AI & LLM policy:** Used to generate only code and execute ideas we had as a team.
